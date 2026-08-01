@@ -30,11 +30,15 @@ export const handleClerkWebhook = async (req, res) => {
   if (eventType === 'user.created') {
     const { id, username, email_addresses } = evt.data
 
-    await User.create({
-      clerkId: id,
-      username: username,
-      email: email_addresses[0].email_address
-    })
+    const existingUser = await User.findOne({ clerkId: id })
+
+    if (!existingUser) {
+      await User.create({
+        clerkId: id,
+        username: username || email_addresses[0].email_address.split('@')[0],
+        email: email_addresses[0].email_address
+      })
+    }
   }
 
   res.status(200).json({ message: 'Webhook received' })

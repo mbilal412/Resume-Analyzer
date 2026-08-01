@@ -1,0 +1,49 @@
+@use '../../styles/variables' as *;
+
+.footer {
+  border-top: 1px solid $color-border;
+  background-color: $color-bg-white;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: $spacing-xs $spacing-xs;
+    gap: $spacing-md;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  &__logo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $color-primary;
+  }
+
+  &__copyright {
+    font-size: 0.8125rem;
+    color: $color-text-muted;
+  }
+
+  &__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+
+  &__link {
+    font-size: 0.8125rem;
+    color: $color-text-muted;
+  }
+}

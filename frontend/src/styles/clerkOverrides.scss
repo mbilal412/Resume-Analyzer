@@ -1,0 +1,11 @@
+.custom-clerk-button {
+  background-color: #10B981;
+  &:hover {
+    background-color: #059669;
+  }
+  color: white;
+}
+
+.custom-clerk-card {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}

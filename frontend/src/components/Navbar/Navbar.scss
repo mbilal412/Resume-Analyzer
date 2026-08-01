@@ -1,0 +1,122 @@
+@use '../../styles/variables' as *;
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: $color-bg-white;
+  border-bottom: 1px solid $color-border;
+
+  &__inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: $max-width;
+    height: $navbar-height;
+    margin: 0 auto;
+    padding: 0 $spacing-xs;
+  }
+
+  &__logo {
+    width: 10rem;
+    height: 6rem;
+  }
+
+  &__menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0.5rem;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+
+  &__menu-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    width: 100%;
+
+    span {
+      display: block;
+      width: 1.45rem;
+      height: 0.16rem;
+      background-color: $color-text-muted;
+      border-radius: 999px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  &__login {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: $color-text-muted;
+    text-decoration: none;
+  }
+
+  &__cta {
+    padding: $spacing-xs $spacing-md;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $color-bg-white;
+    background-color: $color-accent;
+    border-radius: $radius-md;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $color-accent-hover;
+    }
+  }
+
+  @media (max-width: 768px) {
+    &__menu-toggle {
+      display: inline-flex;
+    }
+
+    &__actions {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: $spacing-sm;
+      padding: $spacing-sm;
+      background-color: $color-bg-white;
+      border: 1px solid $color-border;
+      border-radius: $radius-md;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-0.25rem);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+
+      &--open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+    }
+
+    &__login {
+      text-align: center;
+    }
+
+    &__cta {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
