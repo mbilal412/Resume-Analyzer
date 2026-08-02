@@ -1,7 +1,7 @@
-import Navbar from '../../components/Navbar/Navbar';
-import Hero from '../../components/Hero/Hero';
-import HowItWorks from '../../components/HowItWorks/HowItWorks';
-import Footer from '../../components/Footer/Footer';
+import Navbar from '../../components/navbar/Navbar';
+import Hero from '../../components/hero/Hero';
+import HowItWorks from '../../components/how-it-works/HowItWorks';
+import Footer from '../../components/footer/Footer';
 import './HomePage.scss';
 
 function HomePage() {

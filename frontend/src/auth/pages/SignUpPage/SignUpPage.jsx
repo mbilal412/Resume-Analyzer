@@ -1,7 +1,7 @@
 import { SignUp } from '@clerk/clerk-react';
-import { clerkAppearance } from '../../clerkTheme';
+import { clerkAppearance } from '../../../clerkTheme';
 import './SignUpPage.scss';
-import '../../styles/clerkOverrides.scss';
+import '../../../styles/clerkOverrides.scss';
 
 const SignUpPage = () => {
   return (

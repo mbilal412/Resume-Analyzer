@@ -1,7 +1,7 @@
 import { SignIn } from '@clerk/clerk-react';
-import { clerkAppearance } from '../../clerkTheme';
+import { clerkAppearance } from '../../../clerkTheme';
 import './SignInPage.scss';
-import '../../styles/clerkOverrides.scss';
+import '../../../styles/clerkOverrides.scss';
 
 const SignInPage = () => {
   return (
