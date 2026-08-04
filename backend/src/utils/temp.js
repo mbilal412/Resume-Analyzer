@@ -160,7 +160,9 @@ RULES:
 - matchScore must reflect a realistic percentage based on overlap between resume content and job description requirements.
 - All "answer" fields must teach the candidate HOW to respond in an interview, not give them a fixed script to memorize.
 - Return ONLY valid JSON. No markdown formatting, no code blocks, no explanation text before or after the JSON.
-- Do not include any fields other than those specified above.`;
+- Do not include any fields other than those specified above.
+- Preparation plan tasks should be actionable, realistic, and tailored to the candidate's current skill set and the job description requirements.
+- Preparation plan must be minimum of 5 days, and max limit is on you to decide, but ensure it is sufficient for the candidate to prepare effectively.`;
 
 
 

@@ -1,5 +1,5 @@
 import Groq from "groq-sdk";
-import { jobDescription, resume, systemPrompt, InterviewAnalysisSchema } from './temp.js';
+import { systemPrompt, InterviewAnalysisSchema, resume } from './temp.js';
 import { z } from "zod";
 
 
@@ -7,9 +7,9 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const model = "openai/gpt-oss-20b";
 
 
-export async function getInterviewPlan() {
+export async function getInterviewPlan(resumeContent, jobDescription) {
     try {
-        const chatCompletion = await getGroqChatCompletion();
+        const chatCompletion = await getGroqChatCompletion(resumeContent, jobDescription);
         const result = JSON.parse(chatCompletion.choices[0]?.message?.content);
         result.modelUsed = model;
         return result;
@@ -19,7 +19,7 @@ export async function getInterviewPlan() {
     }
 }
 
-export async function getGroqChatCompletion() {
+export async function getGroqChatCompletion(resumeContent, jobDescription) {
     return groq.chat.completions.create({
         messages: [
             {
@@ -28,7 +28,7 @@ export async function getGroqChatCompletion() {
             },
             {
                 role: "user",
-                content: `Job Description: ${jobDescription}\n\nResume: ${resume}`,
+                content: `Job Description: ${jobDescription}\n\nResume: ${resumeContent}`,
             }
         ],
         model: model,

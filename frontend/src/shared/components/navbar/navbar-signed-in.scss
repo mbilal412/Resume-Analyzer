@@ -1,0 +1,90 @@
+@use 'sass:color';
+@use '../../../styles/variables' as *;
+
+// Signed-in navbar styles — import via Navbar.scss on any page using <Navbar />
+.navbar {
+
+  &__profile {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &__user-box {
+    display: flex;
+    align-items: center;
+  }
+
+  &__user-trigger {
+    display: flex !important;
+    align-items: center !important;
+    gap: $spacing-xs !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+  }
+
+  &__user-name {
+    order: -1;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: $color-text-primary !important;
+  }
+
+  &__avatar-box {
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: $radius-full !important;
+    border: 2px solid color.change($color-primary, $alpha: 0.15) !important;
+    background-color: $color-primary !important;
+    box-shadow: none !important;
+
+    img {
+      border-radius: $radius-full !important;
+    }
+  }
+
+  &__chevron {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    color: $color-text-muted;
+    pointer-events: none;
+  }
+
+  &__user-popover {
+    border: 1px solid $color-border !important;
+    border-radius: $radius-lg !important;
+    box-shadow: $shadow-card !important;
+  }
+
+  &__user-action {
+    &:hover {
+      background-color: $color-primary-subtle !important;
+    }
+  }
+
+  &__user-action-text {
+    color: $color-text-primary !important;
+  }
+
+  &__user-footer {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    &__user-name {
+      display: none !important;
+    }
+  }
+}

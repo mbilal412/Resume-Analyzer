@@ -8,8 +8,8 @@ const ProtectedRoute = ({ children }) => {
 
   if (!isLoaded) {
     return (
-      <div class="spinner-container">
-        <div class="spinner"></div>
+      <div className="spinner-container">
+        <div className="spinner"></div>
       </div>
     );
   }

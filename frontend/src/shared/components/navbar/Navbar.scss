@@ -1,4 +1,5 @@
 @use '../../../styles/variables' as *;
+@use './navbar-signed-in';
 
 .navbar {
   position: sticky;
@@ -15,12 +16,16 @@
     max-width: $max-width;
     height: $navbar-height;
     margin: 0 auto;
-    padding: 0 $spacing-xs;
+    padding: 0 $spacing-sm;
   }
 
   &__logo {
-    width: 10rem;
-    height: 6rem;
+    display: block;
+    width: auto;
+    max-width: 10rem;
+    height: 5rem;
+    object-fit: contain;
+    cursor: pointer;
   }
 
   &__menu-toggle {

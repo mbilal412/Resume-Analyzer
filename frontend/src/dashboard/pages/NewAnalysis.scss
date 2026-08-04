@@ -1,0 +1,292 @@
+@use 'sass:color';
+@use '../../styles/variables' as *;
+
+$color-info-bg: color.change($color-primary, $alpha: 0.06);
+$color-dropzone-bg: color.change($color-bg, $alpha: 0.5);
+
+.new-analysis {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $color-bg;
+
+  &__main {
+    flex: 1;
+    max-width: 40rem;
+    width: 100%;
+    margin: 0 auto;
+    padding: $spacing-md $spacing-lg $spacing-2xl;
+  }
+
+  &__header {
+    margin-bottom: $spacing-md;
+    text-align: center;
+    h1 {
+      margin-bottom: -0.25rem;
+    }
+  }
+
+  &__title {
+    margin-bottom: $spacing-xs;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 800;
+    color: $color-primary;
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: $color-text-muted;
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    padding: $spacing-lg;
+    background-color: $color-bg-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-card;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $color-text-primary;
+  }
+
+  &__dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    min-height: 10rem;
+    padding: $spacing-lg;
+    background-color: $color-dropzone-bg;
+    border: 2px dashed $color-border;
+    border-radius: $radius-md;
+    text-align: center;
+  }
+
+  &__dropzone-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    color: $color-primary;
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  &__dropzone-text {
+    font-size: 0.9375rem;
+    color: $color-text-muted;
+
+    &--file {
+      font-weight: 600;
+      color: $color-primary;
+    }
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__browse {
+    font-size: inherit;
+    font-weight: 600;
+    color: $color-primary;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      color: color.adjust($color-primary, $lightness: -8%);
+    }
+  }
+
+  &__file-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: $spacing-md;
+  }
+
+  &__file-actions {
+    display: flex;
+    gap: $spacing-sm;
+    align-items: center;
+  }
+
+  &__choose-another {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $color-primary;
+    background: transparent;
+    border: 0;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  &__remove {
+    background: transparent;
+    border: 0;
+    padding: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-text-muted;
+    cursor: pointer;
+    border-radius: $radius-sm;
+
+    &:hover {
+      background: color.change($color-text-muted, $alpha: 0.06);
+      color: color.adjust($color-primary, $lightness: -8%);
+    }
+  }
+
+  &__textarea {
+    width: 100%;
+    min-height: 10rem;
+    padding: $spacing-sm;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: $color-text-primary;
+    background-color: $color-bg-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    resize: vertical;
+    outline: none;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+
+    &:focus {
+      border-color: color.change($color-primary, $alpha: 0.4);
+    }
+  }
+
+  &__submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $color-bg-white;
+    background-color: $color-accent;
+    border-radius: $radius-md;
+    transition: background-color 0.2s ease;
+
+    svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    &:hover {
+      background-color: $color-accent-hover;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: color.change($color-accent, $alpha: 0.7);
+      box-shadow: none;
+      transform: none;
+      pointer-events: none;
+    }
+  }
+
+  &__info {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    background-color: $color-info-bg;
+    border-radius: $radius-md;
+
+    svg {
+      flex-shrink: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-top: 0.125rem;
+      color: $color-primary;
+    }
+
+    p {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: $color-text-muted;
+    }
+  }
+}
+
+.new-analysis-footer {
+  border-top: 1px solid $color-border;
+  background-color: $color-bg-white;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: $spacing-md $spacing-lg;
+    gap: $spacing-md;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__logo {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: $color-primary;
+  }
+
+  &__copyright {
+    font-size: 0.8125rem;
+    color: $color-text-muted;
+  }
+
+  &__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+
+  &__link {
+    font-size: 0.8125rem;
+    color: $color-text-muted;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
