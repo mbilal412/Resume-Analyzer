@@ -11,6 +11,7 @@ export async function getInterviewPlan(resumeContent, jobDescription) {
     try {
         const chatCompletion = await getGroqChatCompletion(resumeContent, jobDescription);
         const result = JSON.parse(chatCompletion.choices[0]?.message?.content);
+        console.log("Interview Plan Generated:", chatCompletion);
         result.modelUsed = model;
         return result;
 

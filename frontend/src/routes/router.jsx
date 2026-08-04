@@ -5,6 +5,7 @@ import SignInPage from "../auth/pages/SignInPage/SignInPage";
 import SignUpPage from "../auth/pages/SignUpPage/SignUpPage";
 import Dashboard from "../dashboard/pages/Dashboard";
 import NewAnalysis from "../dashboard/pages/NewAnalysis";
+import InterviewReport from "../dashboard/pages/InterviewReport";
 import ProtectedRoute from "../shared/components/ProtectedRoute";
 
 const router = createBrowserRouter([
@@ -36,6 +37,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <NewAnalysis />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/dashboard/report/:reportId",
+        element: (
+          <ProtectedRoute>
+            <InterviewReport />
           </ProtectedRoute>
         ),
       },

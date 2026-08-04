@@ -9,6 +9,12 @@ import './Dashboard.scss';
 const REPORTS_PAGE_SIZE = 5;
 
 const MOCK_REPORTS = [
+  {
+    id: 1,
+    role: 'Software Engineer',
+    date: '2024-06-01',
+    score: 85,
+  },
   
 ];
 

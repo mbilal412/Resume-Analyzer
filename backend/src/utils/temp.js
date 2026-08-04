@@ -126,7 +126,8 @@ You will be given two inputs:
 Your task is to analyze both and generate a complete interview preparation report in valid JSON format, matching this exact structure:
 
 {
-  "matchScore": number (0-100, how well the resume matches the job description),
+    "jobTitle": "string - concise job title extracted/inferred from the job description",
+    "matchScore": number (0-100, how well the resume matches the job description),
   "technicalQuestions": [
     {
       "question": "string - a technical question based on the job description's required skills",
@@ -145,15 +146,13 @@ Your task is to analyze both and generate a complete interview preparation repor
       "importance": "low" | "medium" | "high"
     }
   ],
-  "preparationPlan": [
-    {
-      "day": number,
-      "tasks": ["string", "string", ...]
-    }
-  ]
+  "summary": String - Provide a concise 3–5 sentence overall summary of the candidate's fit for the role. Summarize the match between the resume and the job description, highlighting the candidate's strongest qualifications, the most significant weaknesses or missing skills, and the overall interview readiness. Keep it easy to read and avoid repeating information already covered in other sections.
+
+  "recommendation": String - Provide a brief recommendation (2–3 sentences) on the candidate's next steps before the interview. Focus on the highest-priority skills or topics to improve and mention whether the candidate appears to be a strong, moderate, or weak fit for the role. Keep the advice practical and actionable.
 }
 
 RULES:
+- jobTitle must be short and clear (2-4 words), suitable for display as a report name. If the job description doesn't explicitly state a title, infer the most fitting title based on the responsibilities and skills mentioned.
 - Generate exactly {{NUMBER_OF_DAYS}} days in preparationPlan, numbered sequentially starting from 1.
 - Generate 5-8 technicalQuestions and 4-6 behavioralQuestions, based on the seniority and requirements in the job description.
 - skillGaps should only include skills genuinely missing or weak based on comparing the resume against the job description, ordered from high to low importance.
@@ -161,15 +160,19 @@ RULES:
 - All "answer" fields must teach the candidate HOW to respond in an interview, not give them a fixed script to memorize.
 - Return ONLY valid JSON. No markdown formatting, no code blocks, no explanation text before or after the JSON.
 - Do not include any fields other than those specified above.
-- Preparation plan tasks should be actionable, realistic, and tailored to the candidate's current skill set and the job description requirements.
-- Preparation plan must be minimum of 5 days, and max limit is on you to decide, but ensure it is sufficient for the candidate to prepare effectively.`;
-
+- summary: Write the summary directly to the candidate using second-person language ("you", "your"), not in the third person ("the candidate", "he", "she", or by name). Explain how well their resume matches the job description, highlight their strongest qualifications, point out their key skill gaps, and briefly describe their interview readiness. Keep it concise (3–5 sentences), supportive, and actionable.
+- recommendation: Write the recommendation directly to the candidate using second-person language ("you", "your"). Provide 2–3 concise, actionable sentences about what they should focus on before the interview, prioritizing the most important skills or knowledge gaps. Avoid referring to the candidate by name or using third-person pronouns.
+- Must generate all fields mentioned in the schema, do not miss any field.`
 
 
 
 
 
 export const InterviewAnalysisSchema = z.object({
+
+    jobTitle: z
+        .string()
+        .describe("A concise job title extracted or inferred from the job description."),
 
     matchScore: z
         .number()
@@ -217,16 +220,16 @@ export const InterviewAnalysisSchema = z.object({
         })
     ).describe("Skills the candidate should improve before the interview."),
 
-    preparationPlan: z.array(
-        z.object({
-            day: z
-                .number()
-                .describe("The day number in the preparation schedule."),
+    summary: z
+        .string()
+        .describe(
+            "A concise summary of the candidate's fit for the role, highlighting strengths, weaknesses, and overall interview readiness."
+        ),
 
-            tasks: z
-                .array(z.string())
-                .describe("A list of preparation tasks to complete on this day."),
-        })
-    ).describe("A multi-day preparation plan tailored to the candidate."),
+    recommendation: z
+        .string()
+        .describe(
+            "A brief recommendation on the candidate's next steps before the interview, focusing on high-priority skills or topics to improve."
+        ),
 
 });
