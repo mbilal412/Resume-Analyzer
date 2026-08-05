@@ -28,17 +28,30 @@ export const handleClerkWebhook = async (req, res) => {
   const eventType = evt.type
 
   if (eventType === 'user.created') {
-    const { id, username, email_addresses } = evt.data
+    const { id, first_name, last_name, email_addresses } = evt.data
 
-    const existingUser = await User.findOne({ clerkId: id })
-
-    if (!existingUser) {
-      await User.create({
-        clerkId: id,
-        username: username || email_addresses[0].email_address.split('@')[0],
-        email: email_addresses[0].email_address
-      })
+    try {
+      await User.findOneAndUpdate(
+        { clerkId: id },
+        {
+          $setOnInsert: {
+            clerkId: id,
+            firstName: first_name || email_addresses[0].email_address.split('@')[0],
+            lastName: last_name || '',
+            email: email_addresses[0].email_address
+          }
+        },
+        { upsert: true, returnDocument: 'after' }
+      )
+    } catch (error) {
+      if (error.code === 11000) {
+        // Duplicate key error, matlab dusri request ne already bana diya, ignore karo
+        console.log('User already exists, skipping duplicate creation')
+      } else {
+        throw error
+      }
     }
+
   }
 
   res.status(200).json({ message: 'Webhook received' })
