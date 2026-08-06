@@ -18,7 +18,7 @@ export const generateAnalysis = async (jobDescription, file) => {
         });
         console.log('Analysis generated successfully:', response.data);
     } catch (error) {
-        console.error('Error generating analysis:', error);
+        console.log('Error generating analysis:', error.message);
         
     }
 };

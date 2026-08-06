@@ -80,14 +80,22 @@ const interviewReportSchema = new mongoose.Schema({
         min: 0,
         max: 100,
     },
-    technicalQuestions: [technicalQuestionsSchema],
-    behavioralQuestions: [behavioralQuestionsSchema],
-    skillGaps: [skillGapsSchema],
-    preparationPlan: [preparationPlanSchema],
     generatedBy: {
         type: String,
         required: true,
-    }
+    },
+    summary: {
+        type: String,
+        required: true,
+    },
+    recommendation: {
+        type: String,
+        required: true,
+    },
+    technicalQuestions: [technicalQuestionsSchema],
+    skillGaps: [skillGapsSchema],
+}, {
+    timestamps: true
 })
 
 const InterviewReportModel = mongoose.model('InterviewReport', interviewReportSchema);

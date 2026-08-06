@@ -134,12 +134,6 @@ Your task is to analyze both and generate a complete interview preparation repor
       "answer": "string - NOT the direct factual answer. Instead, explain HOW the candidate should structure and approach answering this question in a real interview, considering their resume background. Guide their answering strategy, tone, and what points to emphasize. Do not exceed from 3-5 sentences."
     }
   ],
-  "behavioralQuestions": [
-    {
-      "question": "string - a behavioral question relevant to the role",
-      "answer": "string - NOT a scripted answer. Explain HOW the candidate should approach this question (e.g. using STAR method), what kind of experience from their resume to draw on, and how to structure their response. Do not exceed from 3-5 sentences."
-    }
-  ],
   "skillGaps": [
     {
       "skill": "string - a specific skill missing or weak compared to the job description",
@@ -153,15 +147,14 @@ Your task is to analyze both and generate a complete interview preparation repor
 
 RULES:
 - jobTitle must be short and clear (2-4 words), suitable for display as a report name. If the job description doesn't explicitly state a title, infer the most fitting title based on the responsibilities and skills mentioned.
-- Generate exactly {{NUMBER_OF_DAYS}} days in preparationPlan, numbered sequentially starting from 1.
-- Generate 5-8 technicalQuestions and 4-6 behavioralQuestions, based on the seniority and requirements in the job description.
+- Generate 8-12 technicalQuestions based on the seniority and requirements in the job description.
 - skillGaps should only include skills genuinely missing or weak based on comparing the resume against the job description, ordered from high to low importance.
 - matchScore must reflect a realistic percentage based on overlap between resume content and job description requirements.
 - All "answer" fields must teach the candidate HOW to respond in an interview, not give them a fixed script to memorize.
 - Return ONLY valid JSON. No markdown formatting, no code blocks, no explanation text before or after the JSON.
 - Do not include any fields other than those specified above.
-- summary: Write the summary directly to the candidate using second-person language ("you", "your"), not in the third person ("the candidate", "he", "she", or by name). Explain how well their resume matches the job description, highlight their strongest qualifications, point out their key skill gaps, and briefly describe their interview readiness. Keep it concise (3–5 sentences), supportive, and actionable.
-- recommendation: Write the recommendation directly to the candidate using second-person language ("you", "your"). Provide 2–3 concise, actionable sentences about what they should focus on before the interview, prioritizing the most important skills or knowledge gaps. Avoid referring to the candidate by name or using third-person pronouns.
+- summary: Write the summary directly to the candidate using second-person language ("you", "your"), not in the third person. Give a realistic, honest assessment of their eligibility for this specific job based on the job description. Clearly state what's already strong in their resume, what specific gaps exist relative to the job requirements, and how serious those gaps are for their chances. If the mismatch is severe, be direct about it (e.g. "your current profile makes selection unlikely without addressing X") rather than softening it. If they're a strong fit, say so clearly. Ground every point in the actual job description requirements, not generic advice. Maximum 5 lines.
+- recommendation: Write the recommendation directly to the candidate using second-person language ("you", "your"). Based on the gaps identified in the summary, give 2-3 concise, actionable sentences on exactly what to fix or add in their resume, or what to prepare for before applying/interviewing, prioritized by what matters most for this specific job. Maximum 3 lines.
 - Must generate all fields mentioned in the schema, do not miss any field.`
 
 
@@ -194,20 +187,6 @@ export const InterviewAnalysisSchema = z.object({
         })
     ).describe("A list of technical interview questions."),
 
-    behavioralQuestions: z.array(
-        z.object({
-            question: z
-                .string()
-                .describe("A behavioral interview question relevant to the role."),
-
-            answer: z
-                .string()
-                .describe(
-                    "Do not provide a scripted answer. Explain how the candidate should structure their response, such as using the STAR method, and which experiences from the resume to highlight."
-                ),
-        })
-    ).describe("A list of behavioral interview questions."),
-
     skillGaps: z.array(
         z.object({
             skill: z
@@ -223,13 +202,13 @@ export const InterviewAnalysisSchema = z.object({
     summary: z
         .string()
         .describe(
-            "A concise summary of the candidate's fit for the role, highlighting strengths, weaknesses, and overall interview readiness."
+            "Written directly to the candidate (use 'you'/'your', not third-person). A realistic, honest assessment of their eligibility for this specific job based on the job description: what's already strong in the resume, what specific gaps exist, and how serious those gaps are for their chances. Be direct if the mismatch is severe rather than softening it. Ground every point in the actual job description. Max 5 lines."
         ),
 
     recommendation: z
         .string()
         .describe(
-            "A brief recommendation on the candidate's next steps before the interview, focusing on high-priority skills or topics to improve."
+            "Written directly to the candidate (use 'you'/'your', not third-person). 2-3 concise, actionable sentences on exactly what to fix or improve before the interview, prioritized by what matters most for this specific job, based on the gaps identified in the summary. Max 3 lines."
         ),
 
 });

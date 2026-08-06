@@ -20,58 +20,68 @@ export const createInterviewReport = async (req, res) => {
 
     // Get the user ID and mongoUuserId from the authenticated user
     const userId = auth.userId;
-    const mongoUserId = userModel.findOne({ clerkId: userId })._id;
-
-    console.log('Authenticated user ID:', userId);
-    console.log('Mongo user ID:', mongoUserId);
+    const mongoUserId = (await userModel.findOne({ clerkId: userId }))._id;
 
     // Extract job description and resume from the request
     const { jobDescription } = req.body
+    if (!jobDescription || !req.file) {
+        return res.status(400).json({ error: "Job description and resume file are required." });
+    }
     const resume = await (new PDFParse(Uint8Array.from(req.file.buffer))).getText()
     const resumeContent = resume.text;
 
     // Calling the getInterviewPlan function to generate the interview report
 
     let lastError;
-
-    for (let attempt = 1; attempt <= 2; attempt++) {
+    const maxRetries = 2;
+    let interviewReport;
+    let file;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             // Generate the interview report
-            const interviewReport = await getInterviewPlan(resumeContent, jobDescription)
+            interviewReport = await getInterviewPlan(resumeContent, jobDescription)
             // Uploading resume to ImageKit
             try {
-                const file = await client.files.upload({
+                file = await client.files.upload({
                     file: await toFile(req.file.buffer, 'file.pdf', { type: req.file.mimetype }),
                     fileName: `resume_${Date.now()}.pdf`,
                     folder: 'crack-it/resumes'
                 })
             } catch (error) {
-                console.error('Error uploading resume to ImageKit:', error);
                 return res.status(500).json({ error: 'Failed to upload resume to ImageKit' });
             }
 
-            // Creating a new interview report in the database
-            const newReport = InterviewReportModel.create({
-                userId: mongoUserId,
-                jobTitle: interviewReport.jobTitle,
-                jobDescription: jobDescription,
-                resume: file.url, // Store the URL of the uploaded resume
-                summary: interviewReport.summary,
-                recommendation: interviewReport.recommendation,
-                technicalQuestions: interviewReport.technicalQuestions,
-                behavioralQuestions: interviewReport.behavioralQuestions,
-                skillGaps: interviewReport.skillGaps,
-                generatedBy: interviewReport.modelUsed
-            })
-            return res.status(201).json({
-                message: 'Interview report created successfully',
-                data: interviewReport
-            });
+            break; // Exit the loop if successful
+
         } catch (error) {
             lastError = error;
+            if (attempt === maxRetries) {
+                return res.status(500).json({ message: 'Error generating interview report' });
+            }
 
         }
     }
-    console.error('Error generating interview report:', lastError);
-    res.status(500).json({ message: 'Internal server error' });
+
+    // Creating a new interview report in the database
+    let newReport;
+    try{
+        newReport = await InterviewReportModel.create({
+        userId: mongoUserId,
+        jobTitle: interviewReport.jobTitle,
+        jobDescription: jobDescription,
+        resume: file.url, // Store the URL of the uploaded resume
+        summary: interviewReport.summary,
+        recommendation: interviewReport.recommendation,
+        technicalQuestions: interviewReport.technicalQuestions,
+        skillGaps: interviewReport.skillGaps,
+        generatedBy: interviewReport.modelUsed
+    })
+    }catch (error) {
+        return res.status(500).json({ message: 'Error saving interview report to database' });
+    }
+
+    return res.status(201).json({
+        message: 'Interview report created successfully',
+        data: newReport
+    });
 }
