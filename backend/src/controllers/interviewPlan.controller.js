@@ -67,6 +67,7 @@ export const createInterviewReport = async (req, res) => {
     try{
         newReport = await InterviewReportModel.create({
         userId: mongoUserId,
+        matchScore: interviewReport.matchScore,
         jobTitle: interviewReport.jobTitle,
         jobDescription: jobDescription,
         resume: file.url, // Store the URL of the uploaded resume
@@ -77,7 +78,7 @@ export const createInterviewReport = async (req, res) => {
         generatedBy: interviewReport.modelUsed
     })
     }catch (error) {
-        return res.status(500).json({ message: 'Error saving interview report to database' });
+        return res.status(500).json({ error: 'Error saving interview report to database' });
     }
 
     return res.status(201).json({

@@ -16,9 +16,22 @@ export const generateAnalysis = async (jobDescription, file) => {
                 'Content-Type': 'multipart/form-data',
             },
         });
-        console.log('Analysis generated successfully:', response.data);
+        return response.data;
     } catch (error) {
-        console.log('Error generating analysis:', error.message);
-        
+        console.log(error.response.data)
+        throw error.response?.data || { message: 'An error occurred while generating the analysis.' };
     }
 };
+export const getAllInterviewReports = async () => {
+    try {
+        const response = await api.get('/interview-reports');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'An error occurred while fetching the interview reports.' };
+    }
+}
+
+export const getInterviewReport = async (id) =>{
+
+}
+

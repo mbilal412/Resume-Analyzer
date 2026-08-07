@@ -1,31 +1,23 @@
-import { useEffect, useState } from 'react';
-import { useAuth, useUser } from '@clerk/clerk-react';
-import Navbar from '../../shared/components/navbar/Navbar';
-import Footer from '../../shared/components/footer/Footer';
-import { Link } from 'react-router';
-import '../../shared/components/ProtectedRoute.scss';
-import './Dashboard.scss';
+import { useEffect, useState } from "react";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import Navbar from "../../shared/components/navbar/Navbar";
+import Footer from "../../shared/components/footer/Footer";
+import { Link } from "react-router";
+import "../../shared/components/ProtectedRoute.scss";
+import "./Dashboard.scss";
+import { useAnalysis } from "../hooks/useAnalysis";
 
 const REPORTS_PAGE_SIZE = 5;
 
-const MOCK_REPORTS = [
-  {
-    id: 1,
-    role: 'Software Engineer',
-    date: '2024-06-01',
-    score: 85,
-  },
-  
-];
-
 function getScoreLevel(score) {
-  if (score >= 80) return 'high';
-  if (score >= 50) return 'medium';
-  return 'low';
+  if (score >= 80) return "high";
+  if (score >= 50) return "medium";
+  return "low";
 }
 
 function EmptyReports() {
-  return (    <div className="dashboard-empty">
+  return (
+    <div className="dashboard-empty">
       <div className="dashboard-empty__icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none">
           <path
@@ -46,8 +38,8 @@ function EmptyReports() {
       </div>
       <h3 className="dashboard-empty__title">No reports found yet</h3>
       <p className="dashboard-empty__text">
-        Upload your resume and paste a job description to generate your first AI-powered
-        match report.
+        Upload your resume and paste a job description to generate your first
+        AI-powered match report.
       </p>
       <Link to="/dashboard/new-analysis" className="dashboard-empty__cta">
         Start your first analysis
@@ -67,7 +59,9 @@ function ReportsTable({ reports }) {
   const hasMoreReports = visibleCount < reports.length;
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + REPORTS_PAGE_SIZE, reports.length));
+    setVisibleCount((prev) =>
+      Math.min(prev + REPORTS_PAGE_SIZE, reports.length),
+    );
   };
 
   return (
@@ -78,18 +72,28 @@ function ReportsTable({ reports }) {
           <span>Match Score</span>
           <span>Action</span>
         </div>
-        {visibleReports.map((report) => (          <div key={report.id} className="dashboard-table__row">
+        {visibleReports.map((report) => (
+          <div key={report.id} className="dashboard-table__row">
             <div className="dashboard-table__role">
-              <span className="dashboard-table__role-name">{report.role}</span>
-              <span className="dashboard-table__role-date">{report.date}</span>
+              <span className="dashboard-table__role-name">
+                {report.jobTitle}
+              </span>
+              <span className="dashboard-table__role-date">
+                {new Date(report.createdAt).toLocaleDateString()}
+              </span>
             </div>
             <div className="dashboard-table__score">
-              <span className={`dashboard-table__badge dashboard-table__badge--${getScoreLevel(report.score)}`}>
-                {report.score}%
+              <span
+                className={`dashboard-table__badge dashboard-table__badge--${getScoreLevel(report.matchScore)}`}
+              >
+                {report.matchScore}%
               </span>
             </div>
             <div className="dashboard-table__action">
-              <span className="dashboard-table__view">
+              <Link
+                to={`/dashboard/report/${report._id}`}
+                className="dashboard-table__view"
+              >
                 View Report
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path
@@ -100,7 +104,7 @@ function ReportsTable({ reports }) {
                     strokeLinejoin="round"
                   />
                 </svg>
-              </span>
+              </Link>
             </div>
           </div>
         ))}
@@ -122,7 +126,21 @@ function ReportsTable({ reports }) {
 function Dashboard() {
   const { isSignedIn, isLoaded } = useAuth();
   const { user } = useUser();
-  const reports = MOCK_REPORTS;
+  const { fetchAllReports, allReports, isLoading } = useAnalysis();
+  let reports = allReports;
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        await fetchAllReports();
+        reports = allReports;
+      } catch (error) {
+        console.error("Error fetching reports:", error);
+      }
+    };
+
+    fetchReports();
+  }, []);
 
   if (!isLoaded) {
     return (
@@ -136,18 +154,30 @@ function Dashboard() {
     return null;
   }
 
+  if (isLoading) {
+    return (
+      <div className="spinner-container">
+        <div className="spinner" />
+      </div>
+    );
+  }
+
+  console.log(reports);
+
   const firstName =
     user?.firstName ||
-    user?.fullName?.split(' ')[0] ||
+    user?.fullName?.split(" ")[0] ||
     user?.username ||
-    'there';
+    "there";
 
   return (
     <div className="dashboard">
       <Navbar />
       <main className="dashboard__main">
         <section className="dashboard-welcome">
-          <h1 className="dashboard-welcome__title">Welcome back, {firstName}</h1>
+          <h1 className="dashboard-welcome__title">
+            Welcome back, {firstName}
+          </h1>
           <p className="dashboard-welcome__subtitle">
             View your past reports or start a new analysis
           </p>
@@ -155,10 +185,12 @@ function Dashboard() {
 
         <section className="dashboard-banner">
           <div className="dashboard-banner__content">
-            <h2 className="dashboard-banner__title">Ready for your next role?</h2>
+            <h2 className="dashboard-banner__title">
+              Ready for your next role?
+            </h2>
             <p className="dashboard-banner__text">
-              Upload your latest resume and paste a job description to get an AI-powered match
-              score and optimization tips in seconds.
+              Upload your latest resume and paste a job description to get an
+              AI-powered match score and optimization tips in seconds.
             </p>
           </div>
           <Link to="/dashboard/new-analysis" className="dashboard-banner__cta">
@@ -181,7 +213,13 @@ function Dashboard() {
             <h2 className="dashboard-reports__title">Your Reports</h2>
             <div className="dashboard-reports__search">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="7"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
                 <path
                   d="M20 20l-3.5-3.5"
                   stroke="currentColor"
@@ -194,10 +232,10 @@ function Dashboard() {
           </div>
 
           {reports.length === 0 ? (
-                <EmptyReports />
-              ) : (
-                <ReportsTable reports={reports} />
-              )}
+            <EmptyReports />
+          ) : (
+            <ReportsTable reports={reports} />
+          )}
         </section>
       </main>
 

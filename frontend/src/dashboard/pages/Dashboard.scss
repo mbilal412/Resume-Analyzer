@@ -404,6 +404,7 @@ $color-banner-text: color.change($color-bg-white, $alpha: 0.85);
     font-size: 0.875rem;
     font-weight: 500;
     color: $color-primary;
+    text-decoration: none;
 
     svg {
       width: 1rem;

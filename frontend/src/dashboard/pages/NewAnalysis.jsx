@@ -186,7 +186,7 @@ function NewAnalysis() {
             type="button"
             className="new-analysis__submit"
             onClick={handleSubmit}
-              disabled={!selectedFile || jobDescription.trim() === ''}
+              disabled={!selectedFile || !jobDescription.trim()}
           >
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path

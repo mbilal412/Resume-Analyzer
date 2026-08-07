@@ -3,9 +3,12 @@ import { createRoot } from "react-dom/client";
 import "./styles/global.scss";
 import { RouterProvider } from "react-router";
 import router from "./routes/router";
+import DashboardContextProvider from "./dashboard/dashboard.context";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <DashboardContextProvider>
+        <RouterProvider router={router} />
+    </DashboardContextProvider>
   </StrictMode>,
 );
