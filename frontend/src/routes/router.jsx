@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/dashboard/report/:reportId",
+        path: "/dashboard/report/:id",
         element: (
           <ProtectedRoute>
             <InterviewReport />

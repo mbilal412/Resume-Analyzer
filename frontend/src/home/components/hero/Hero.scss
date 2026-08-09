@@ -64,14 +64,15 @@
   }
 
   &__cta {
-    padding: $spacing-sm $spacing-xl;
-    font-size: 1rem;
+    padding: $spacing-xs $spacing-lg;
+    font-size: 1.3rem;
     font-weight: 600;
     color: $color-bg-white;
     background-color: $color-accent;
     border-radius: $radius-md;
     box-shadow: $shadow-md;
     transition: background-color 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
 
     &:hover {
       background-color: $color-accent-hover;

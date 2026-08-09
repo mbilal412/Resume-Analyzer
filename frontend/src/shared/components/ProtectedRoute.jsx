@@ -1,10 +1,12 @@
 import React from "react";
 import { useAuth } from "@clerk/clerk-react";
 import './ProtectedRoute.scss';
+import { useNavigate } from "react-router";
 
 const ProtectedRoute = ({ children }) => {
   console.log("rendering");
   const { isSignedIn, isLoaded } = useAuth();
+  const navigate = useNavigate();
 
   if (!isLoaded) {
     return (
@@ -14,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
     );
   }
   if (!isSignedIn) {
-    window.location.href = "/sign-in";
+    navigate("/");
     return null;
   }
   return <>{children}</>;

@@ -32,6 +32,11 @@ export const getAllInterviewReports = async () => {
 }
 
 export const getInterviewReport = async (id) =>{
-
+    try {
+        const response = await api.get(`/interview-report/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'An error occurred while fetching the interview reports.' };
+    }
 }
 

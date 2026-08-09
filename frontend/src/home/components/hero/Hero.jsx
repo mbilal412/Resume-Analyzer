@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import './Hero.scss';
 
 function Hero() {
@@ -7,15 +8,15 @@ function Hero() {
       <div className="hero__content">
         <span className="hero__badge">AI-POWERED OPTIMIZATION</span>
         <h1 className="hero__title">
-          Optimize your resume <span className="hero__highlight">with AI</span>
+          Know exactly where you stand before you apply <span className="hero__highlight"></span>
         </h1>
         <p className="hero__subtitle">
           Get real-time AI feedback to align your resume with job descriptions and land your
           dream role. Optimize your career path with our expert analyzer.
         </p>
-        <button type="button" className="hero__cta">
+        <Link to="/sing-up" type="button" className="hero__cta">
           Get Started
-        </button>
+        </Link>
       </div>
     </section>
   );

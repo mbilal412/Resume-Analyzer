@@ -1,10 +1,10 @@
-import { generateAnalysis, getAllInterviewReports } from "../services/analysisService";
+import { generateAnalysis, getAllInterviewReports, getInterviewReport} from "../services/analysisService";
 import { DashboardContext } from "../dashboard.context";
 import { useContext } from "react";
 
 export const useAnalysis = () => {
 
-  const { setAnalysisResult, setIsLoading, setError, analysisResult, isLoading, error, setAllReports, allReports } = useContext(DashboardContext);
+  const { setIsLoading, setError, isLoading, error, setAllReports, allReports } = useContext(DashboardContext);
 
 
   const submitAnalysis = async (jobDescription, file) => {
@@ -37,11 +37,23 @@ export const useAnalysis = () => {
     }
   };
 
+  const fetchReportById = async (id) => {
+    try {
+      setIsLoading(true);
+      const result = await getInterviewReport(id);
+      return result.report;
+    } catch (error) {
+      setError(error.error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return {
     submitAnalysis,
     fetchAllReports,
-    analysisResult,
+    fetchReportById,
     allReports,
     isLoading,
     error

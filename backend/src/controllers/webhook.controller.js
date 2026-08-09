@@ -54,5 +54,26 @@ export const handleClerkWebhook = async (req, res) => {
 
   }
 
-  res.status(200).json({ message: 'Webhook received' })
+  if (eventType === 'user.updated') {
+    const { id, first_name, last_name, email_addresses } = evt.data
+
+    await User.findOneAndUpdate(
+      { clerkId: id },
+      {
+        firstName: first_name,
+        lastName: last_name || '',
+        email: email_addresses[0].email_address
+      }
+    )
+  }
+
+  if (eventType === 'user.deleted') {
+    const { id } = evt.data
+
+    await User.findOneAndDelete({ clerkId: id })
+  }
+
+
+
+res.status(200).json({ message: 'Webhook received' })
 }
