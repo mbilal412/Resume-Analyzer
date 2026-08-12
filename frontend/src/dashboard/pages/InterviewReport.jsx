@@ -50,7 +50,11 @@ function formatReportDate(value) {
 
 function QuestionList({ items, openIndex, onToggle }) {
   if (!items.length) {
-    return <p className="interview-report__empty">No technical questions available.</p>;
+    return (
+      <p className="interview-report__empty">
+        No technical questions available.
+      </p>
+    );
   }
 
   return (
@@ -61,7 +65,10 @@ function QuestionList({ items, openIndex, onToggle }) {
         const triggerId = `question-trigger-${index}`;
 
         return (
-          <li key={`${item.question}-${index}`} className="interview-report__question">
+          <li
+            key={`${item.question}-${index}`}
+            className="interview-report__question"
+          >
             <button
               type="button"
               id={triggerId}
@@ -70,8 +77,12 @@ function QuestionList({ items, openIndex, onToggle }) {
               aria-controls={panelId}
               onClick={() => onToggle(isOpen ? null : index)}
             >
-              <span className="interview-report__question-index">{index + 1}</span>
-              <span className="interview-report__question-text">{item.question}</span>
+              <span className="interview-report__question-index">
+                {index + 1}
+              </span>
+              <span className="interview-report__question-text">
+                {item.question}
+              </span>
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
                   d="M6 9l6 6 6-6"
@@ -176,7 +187,10 @@ function InterviewReport() {
 
   const scoreLevel = getScoreLevel(report.matchScore);
   const reportDate = formatReportDate(report.createdAt);
-  const scorePercent = Math.max(0, Math.min(100, Number(report.matchScore) || 0));
+  const scorePercent = Math.max(
+    0,
+    Math.min(100, Number(report.matchScore) || 0),
+  );
 
   return (
     <div className="interview-report">
@@ -185,14 +199,20 @@ function InterviewReport() {
       <main className="interview-report__main">
         <header className="interview-report__header">
           <div className="interview-report__header-text">
-            <p className="interview-report__eyebrow">Interview Preparation Report</p>
+            <p className="interview-report__eyebrow">
+              Interview Preparation Report
+            </p>
             <h1 className="interview-report__title">{report.jobTitle}</h1>
-            {reportDate && <p className="interview-report__meta">Generated on {reportDate}</p>}
+            {reportDate && (
+              <p className="interview-report__meta">
+                Generated on {reportDate}
+              </p>
+            )}
           </div>
 
           <div
             className={`interview-report__score-block interview-report__score-block--${scoreLevel}`}
-            style={{ '--score-percent': `${scorePercent}%` }}
+            style={{ "--score-percent": `${scorePercent}%` }}
           >
             <span className="interview-report__score-label">Match Score</span>
             <span className="interview-report__score-value">
@@ -206,7 +226,9 @@ function InterviewReport() {
 
         {(report.summary || report.recommendation) && (
           <section className="interview-report__section">
-            <h2 className="interview-report__section-title">Assessment Overview</h2>
+            <h2 className="interview-report__section-title">
+              Assessment Overview
+            </h2>
             <div className="interview-report__overview">
               {report.summary && (
                 <article className="interview-report__overview-item">
@@ -225,7 +247,9 @@ function InterviewReport() {
         )}
 
         <section className="interview-report__section">
-          <h2 className="interview-report__section-title">Submitted Materials</h2>
+          <h2 className="interview-report__section-title">
+            Submitted Materials
+          </h2>
           <div className="interview-report__materials">
             <div className="interview-report__material">
               <h3>Resume</h3>
@@ -248,7 +272,9 @@ function InterviewReport() {
                   </svg>
                 </a>
               ) : (
-                <p className="interview-report__empty">No resume link available.</p>
+                <p className="interview-report__empty">
+                  No resume link available.
+                </p>
               )}
             </div>
 
@@ -259,14 +285,18 @@ function InterviewReport() {
                   <p>{report.jobDescription}</p>
                 </div>
               ) : (
-                <p className="interview-report__empty">No job description provided.</p>
+                <p className="interview-report__empty">
+                  No job description provided.
+                </p>
               )}
             </div>
           </div>
         </section>
 
         <section className="interview-report__section">
-          <h2 className="interview-report__section-title">Skill Gap Analysis</h2>
+          <h2 className="interview-report__section-title">
+            Skill Gap Analysis
+          </h2>
           <p className="interview-report__section-desc">
             Skills that need attention before this role, ranked by importance.
           </p>
@@ -293,9 +323,12 @@ function InterviewReport() {
         </section>
 
         <section className="interview-report__section">
-          <h2 className="interview-report__section-title">Technical Interview Questions</h2>
+          <h2 className="interview-report__section-title">
+            Technical Interview Questions
+          </h2>
           <p className="interview-report__section-desc">
-            Expand each question to review guidance on how to approach your answer.
+            Expand each question to review guidance on how to approach your
+            answer.
           </p>
           <QuestionList
             items={report.technicalQuestions}

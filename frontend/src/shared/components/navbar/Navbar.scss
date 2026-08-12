@@ -5,8 +5,15 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: $color-bg-white;
-  border-bottom: 1px solid $color-border;
+  background-color: rgba(255, 255, 255, 0.78);
+  border-bottom: 1px solid rgba(203, 213, 225, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: box-shadow 0.2s ease;
+
+  &--scrolled {
+    box-shadow: 0 1px 8px rgba(15, 23, 42, 0.08);
+  }
 
   &__inner {
     position: relative;
@@ -99,9 +106,11 @@
       align-items: stretch;
       gap: $spacing-sm;
       padding: $spacing-sm;
-      background-color: $color-bg-white;
-      border: 1px solid $color-border;
+      background-color: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(203, 213, 225, 0.6);
       border-radius: $radius-md;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       opacity: 0;
       pointer-events: none;

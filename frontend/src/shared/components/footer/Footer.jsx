@@ -5,22 +5,23 @@ import { useAuth } from '@clerk/clerk-react';
 function Footer() {
   const { isSignedIn, isLoaded } = useAuth();
   const logoTarget = isLoaded && isSignedIn ? '/dashboard' : '/';
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="footer">
       <div className="footer__inner">
         <div className="footer__brand">
           <Link to={logoTarget} className="footer__logo" aria-label="Home">
-            resume match
+            CrackIt
           </Link>
           <span className="footer__copyright">
-            &copy; 2026 Resume Match AI. All rights reserved.
+            &copy; {currentYear} CrackIt. All rights reserved.
           </span>
         </div>
         <div className="footer__links">
-          <span className="footer__link">Privacy Policy</span>
-          <span className="footer__link">Terms of Service</span>
-          <span className="footer__link">Contact Support</span>
+          <Link to="/privacy" className="footer__link">Privacy Policy</Link>
+          <Link to="/terms" className="footer__link">Terms of Service</Link>
+          <Link to="/contact" className="footer__link">Contact</Link>
         </div>
       </div>
     </footer>

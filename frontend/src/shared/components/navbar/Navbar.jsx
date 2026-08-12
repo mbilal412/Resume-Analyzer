@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useAuth, UserButton } from '@clerk/clerk-react';
 import { navbarUserButtonAppearance } from './navbarAppearance';
@@ -41,8 +41,22 @@ function SignedOutActions() {
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
   const logoTarget = isLoaded && isSignedIn ? '/dashboard' : '/';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 8);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const renderActions = () => {
     if (!isLoaded) return null;
@@ -50,10 +64,10 @@ function Navbar() {
   };
 
   return (
-    <header className="navbar">
+    <header className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`}>
       <div className="navbar__inner">
         <Link to={logoTarget} aria-label="Home">
-          <img className="navbar__logo" src="/navbar-logo.png" alt="Resume Match Logo" />
+          <img className="navbar__logo" src="/crackit-wordmark.svg" alt="CrackIt Logo" />
         </Link>
 
         <button

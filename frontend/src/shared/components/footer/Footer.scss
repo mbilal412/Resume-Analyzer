@@ -1,50 +1,62 @@
 @use '../../../styles/variables' as *;
 
 .footer {
-  border-top: 1px solid $color-border;
   background-color: $color-bg-white;
+  border-top: 1px solid $color-border;
+  padding: $spacing-xs 0;
 
   &__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     max-width: $max-width;
     margin: 0 auto;
-    padding: $spacing-xs $spacing-xs;
-    gap: $spacing-md;
+    padding: 0 $spacing-sm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
 
-    @media (max-width: 640px) {
-      flex-direction: column;
-      align-items: flex-start;
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
     }
   }
 
   &__brand {
     display: flex;
     flex-direction: column;
-    gap: $spacing-xs;
+    align-items: center;
+    gap: $spacing-2xs;
+
+    @media (min-width: 768px) {
+      align-items: flex-start;
+    }
   }
 
   &__logo {
-    font-size: 1rem;
+    color: $color-text-muted;
     font-weight: 700;
-    color: $color-primary;
-    cursor: pointer;
+    font-size: 1.125rem;
+    text-decoration: none;
+    letter-spacing: -0.02em;
   }
 
   &__copyright {
-    font-size: 0.8125rem;
     color: $color-text-muted;
+    font-size: 0.8125rem;
   }
 
   &__links {
     display: flex;
-    flex-wrap: wrap;
-    gap: $spacing-md;
+    gap: $spacing-sm;
   }
 
   &__link {
-    font-size: 0.8125rem;
     color: $color-text-muted;
+    font-size: 0.8125rem;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $color-primary;
+    }
   }
 }

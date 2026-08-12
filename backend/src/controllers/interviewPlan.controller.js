@@ -56,7 +56,7 @@ export const createInterviewReport = async (req, res) => {
         } catch (error) {
             lastError = error;
             if (attempt === maxRetries) {
-                return res.status(500).json({ message: 'Error generating interview report' });
+                return res.status(500).json({ error: 'Error generating interview report' });
             }
 
         }
