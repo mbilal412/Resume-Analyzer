@@ -1,10 +1,12 @@
 import Groq from "groq-sdk";
-import { systemPrompt, InterviewAnalysisSchema, resume } from './temp.js';
+import { systemPrompt, InterviewAnalysisSchema, resume } from './systemPrompt.js';
 import { z } from "zod";
 
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const model = "openai/gpt-oss-20b";
+
+const jsonSchema = z.toJSONSchema(InterviewAnalysisSchema);
 
 
 export async function getInterviewPlan(resumeContent, jobDescription) {
@@ -37,7 +39,7 @@ export async function getGroqChatCompletion(resumeContent, jobDescription) {
             json_schema: {
                 name: "InterviewReport",
                 strict: true,
-                schema: z.toJSONSchema(InterviewAnalysisSchema),
+                schema: jsonSchema,
             }
         },
     });

@@ -1,9 +1,15 @@
 import express from 'express';
-import { getInterviewReport, getAllInterviewReports } from '../controllers/interviewReport.controller.js';
+import { getInterviewReport, getAllInterviewReports, createInterviewReport } from '../controllers/interviewReport.controller.js';
+import { requireAuth } from '../middlewares/requireAuth.middleware.js';
+import upload from '../middlewares/file.middleware.js';
+import multerErrorHandler from '../middlewares/multerError.middleware.js';
 
 const router = express.Router();
 
-router.get('/interview-report/:id', getInterviewReport)
-router.get('/interview-reports', getAllInterviewReports)
+router.post('/', requireAuth, upload.single('resume'), multerErrorHandler, createInterviewReport);
+router.get('/:id', requireAuth, getInterviewReport);
+router.get('/', requireAuth, getAllInterviewReports)
 
 export default router;
+
+

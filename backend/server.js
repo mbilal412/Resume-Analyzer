@@ -2,9 +2,15 @@ import 'dotenv/config'
 import app from './src/app.js';
 import connectDB from './src/config/db.js';
 
-connectDB()
+await connectDB()
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+
+const server = app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server is running on port ${process.env.PORT || 3000}`);
+});
+
+server.on('error', (err) => {
+  console.error('Server error:', err);
+  process.exit(1);
 });
 

@@ -1,11 +1,6 @@
-import { getAuth } from "@clerk/express";
+import { sendSuccess, sendError } from "../utils/response.js";
+
 
 export const getMeController = (req, res) => {
-    const auth = getAuth(req);
-
-    if(!auth || !auth.userId) {
-        return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    res.status(200).json({ userId: auth.userId });
-}
+    return sendSuccess(res, "User fetched successfully", { userId: req.auth?.userId }, 200);
+};

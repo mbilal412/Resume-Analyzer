@@ -31,8 +31,7 @@ function NewAnalysis() {
   const handleBrowseClick = () => fileInputRef.current?.click();
 
   const handleSubmit = () => {
-    console.log("handleSubmit called");
-    submitAnalysis(jobDescription, selectedFile);
+    submitAnalysis(jobDescription.trim(), selectedFile);
   };
 
   if (!isLoaded) {

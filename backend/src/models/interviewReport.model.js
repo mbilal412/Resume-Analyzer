@@ -13,18 +13,6 @@ const technicalQuestionsSchema = new mongoose.Schema({
 }, {
     _id: false
 })
-const behavioralQuestionsSchema = new mongoose.Schema({
-    question: {
-        type: String,
-        required: true,
-    },
-    answer: {
-        type: String,
-        required: true,
-    }
-}, {
-    _id: false
-})
 
 
 const skillGapsSchema = new mongoose.Schema({
@@ -40,22 +28,6 @@ const skillGapsSchema = new mongoose.Schema({
 }, {
     _id: false
 })
-
-const preparationPlanSchema = new mongoose.Schema({
-    day: {
-        type: Number,
-        required: true,
-    },
-    tasks: [{
-        type: String,
-        required: true,
-    }],
-
-}, {
-    _id: false
-})
-
-
 
 const interviewReportSchema = new mongoose.Schema({
     userId: {
@@ -97,6 +69,8 @@ const interviewReportSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
+
+interviewReportSchema.index({ userId: 1, createdAt: -1 }); // Index for efficient querying by userId and sorting by createdAt
 
 const InterviewReportModel = mongoose.model('InterviewReport', interviewReportSchema);
 export default InterviewReportModel;
