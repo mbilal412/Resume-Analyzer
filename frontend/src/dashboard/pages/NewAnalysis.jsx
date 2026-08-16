@@ -16,7 +16,7 @@ function NewAnalysis() {
   const [formError, setFormError] = useState(null);
 
   const { submitAnalysis } = useAnalysis();
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, getToken } = useAuth();
   const navigate = useNavigate();
 
   const clearErrors = () => {
@@ -45,7 +45,8 @@ function NewAnalysis() {
     setIsSubmitting(true);
 
     try {
-      const newReport = await submitAnalysis(jobDescription.trim(), selectedFile);
+      const token = await getToken();
+      const newReport = await submitAnalysis(jobDescription.trim(), selectedFile, token);
       navigate(`/dashboard/report/${newReport._id}`);
     } catch (err) {
       const message =

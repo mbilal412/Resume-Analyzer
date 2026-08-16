@@ -113,7 +113,7 @@ function QuestionList({ items, openIndex, onToggle }) {
 function InterviewReport() {
   const { id } = useParams();
   const { fetchReportById } = useAnalysis();
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, getToken } = useAuth();
 
   const [openQuestion, setOpenQuestion] = useState(null);
   const [report, setReport] = useState(null);
@@ -131,7 +131,8 @@ function InterviewReport() {
       setReport(null);
 
       try {
-        const data = await fetchReportById(id);
+        const token = await getToken();
+        const data = await fetchReportById(id, token);
         if (!cancelled) {
           // Guard: if the service returned undefined (shouldn't happen, but be safe)
           if (!data) throw new Error("Report data was empty.");

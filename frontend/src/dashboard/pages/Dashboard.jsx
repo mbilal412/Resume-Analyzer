@@ -125,7 +125,7 @@ function ReportsTable({ reports }) {
 }
 
 function Dashboard() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, getToken } = useAuth();
   const { user } = useUser();
   const { fetchAllReports, allReports } = useAnalysis();
 
@@ -140,7 +140,9 @@ function Dashboard() {
       setIsLoading(true);
       setError(null);
       try {
-        await fetchAllReports();
+        const token = await getToken();
+
+        await fetchAllReports(token);
       } catch (err) {
         if (!cancelled) {
           setError(
@@ -256,7 +258,13 @@ function Dashboard() {
               aria-live="assertive"
             >
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
                 <path
                   d="M12 8v4M12 16h.01"
                   stroke="currentColor"
@@ -268,18 +276,22 @@ function Dashboard() {
               <button
                 type="button"
                 className="dashboard-reports__retry"
-                onClick={() => {
+                onClick={async () => {
                   setError(null);
                   setIsLoading(true);
-                  fetchAllReports()
-                    .catch((err) =>
-                      setError(
-                        typeof err === "string"
-                          ? err
-                          : "Something went wrong. Please try again.",
-                      ),
-                    )
-                    .finally(() => setIsLoading(false));
+                  try {
+                    const token = await getToken(); 
+                    const data = await getAllInterviewReports(token); // ✅ token pass karo
+                    setAllReports(data);
+                  } catch (err) {
+                    setError(
+                      typeof err === "string"
+                        ? err
+                        : "Something went wrong. Please try again.",
+                    );
+                  } finally {
+                    setIsLoading(false);
+                  }
                 }}
               >
                 Try again
@@ -290,7 +302,9 @@ function Dashboard() {
           ) : (
             <ReportsTable
               reports={allReports.filter((report) =>
-                report.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase())
+                report.jobTitle
+                  ?.toLowerCase()
+                  .includes(searchQuery.toLowerCase()),
               )}
             />
           )}

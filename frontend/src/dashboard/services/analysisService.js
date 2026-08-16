@@ -1,22 +1,17 @@
 import axios from "axios";
-import { useAuth } from "@clerk/clerk-react";
-
-const {getToken} = useAuth()
-
-
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
 
-export const generateAnalysis = async (jobDescription, file) => {
+export const generateAnalysis = async (jobDescription, file, token) => {
   const formData = new FormData();
   formData.append("jobDescription", jobDescription);
   formData.append("resume", file);
 
   try {
-    const token = await getToken()
+    
     const response = await api.post("/reports", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -29,9 +24,10 @@ export const generateAnalysis = async (jobDescription, file) => {
   }
 };
 
-export const getAllInterviewReports = async () => {
+export const getAllInterviewReports = async (token) => {
+  console.log("token", token)
   try {
-    const token = await getToken()
+    
     const response = await api.get("/reports", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -43,9 +39,9 @@ export const getAllInterviewReports = async () => {
   }
 };
 
-export const getInterviewReport = async (id) => {
+export const getInterviewReport = async (id, token) => {
   try {
-    const token = await getToken()
+    
     const response = await api.get(`/reports/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -13,8 +13,8 @@ export const useAnalysis = () => {
    * Submit a new analysis. Returns the created report data on success.
    * Throws a string error message on failure — caller handles state.
    */
-  const submitAnalysis = async (jobDescription, file) => {
-    const result = await generateAnalysis(jobDescription, file);
+  const submitAnalysis = async (jobDescription, file, token) => {
+    const result = await generateAnalysis(jobDescription, file, token);
     return result.data;
   };
 
@@ -22,8 +22,8 @@ export const useAnalysis = () => {
    * Fetch all reports and update the shared list cache.
    * Throws a string error message on failure — caller handles state.
    */
-  const fetchAllReports = async () => {
-    const result = await getAllInterviewReports();
+  const fetchAllReports = async (token) => {
+    const result = await getAllInterviewReports(token);
     setAllReports(result.data);
     return result.data;
   };
@@ -32,8 +32,8 @@ export const useAnalysis = () => {
    * Fetch a single report by ID. Returns the report data on success.
    * Throws a string error message on failure — caller handles state.
    */
-  const fetchReportById = async (id) => {
-    const result = await getInterviewReport(id);
+  const fetchReportById = async (id, token) => {
+    const result = await getInterviewReport(id, token);
     return result.data;
   };
 
