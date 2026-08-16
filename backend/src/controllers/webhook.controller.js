@@ -6,7 +6,8 @@ export const handleClerkWebhook = async (req, res) => {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET
 
   if(!WEBHOOK_SECRET) {
-    return sendError(res, "Webhook secret not configured", 500)
+    console.error('Webhook secret not configured in environment');
+    return sendError(res, "Something went wrong on our end. Please try again.", 500)
   }
 
   const svix_id = req.headers['svix-id']
@@ -14,7 +15,7 @@ export const handleClerkWebhook = async (req, res) => {
   const svix_signature = req.headers['svix-signature']
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return sendError(res, "Missing svix headers", 400)
+    return sendError(res, "Invalid request. Please try again.", 400)
   }
 
   const wh = new Webhook(WEBHOOK_SECRET)
@@ -27,7 +28,8 @@ export const handleClerkWebhook = async (req, res) => {
       'svix-signature': svix_signature
     })
   } catch (err) {
-    return sendError(res, "Webhook verification failed", 400)
+    console.error('Webhook verification failed:', err);
+    return sendError(res, "Request could not be verified. Please try again.", 400)
   }
 
   const eventType = evt.type
@@ -36,11 +38,11 @@ export const handleClerkWebhook = async (req, res) => {
     const { id, first_name, last_name, email_addresses } = evt.data
 
     if(!email_addresses || email_addresses.length === 0){
-      return sendError(res, "No email addresses provided in user.created payload", 400)
+      return sendError(res, "Account setup failed. Please try again.", 400)
     }
 
     if (!id || !Array.isArray(email_addresses) || !email_addresses[0]?.email_address) {
-      return sendError(res, "Malformed user.created payload", 400)
+      return sendError(res, "Account setup failed. Please try again.", 400)
     }
 
     try {
@@ -59,9 +61,9 @@ export const handleClerkWebhook = async (req, res) => {
     } catch (error) {
       if (error.code === 11000) {
         // Duplicate key error, user already exists, skip
-        console.log('User already exists, skipping duplicate creation')
       } else {
-        return sendError(res, "Failed to create user", 500)
+        console.error('Error creating user from webhook:', error);
+        return sendError(res, "Something went wrong creating your account. Please try again.", 500)
       }
     }
   }
@@ -70,11 +72,11 @@ export const handleClerkWebhook = async (req, res) => {
     const { id, first_name, last_name, email_addresses } = evt.data
 
     if(!email_addresses || email_addresses.length === 0){
-      return sendError(res, "No email addresses provided in user.updated payload", 400)
+      return sendError(res, "Account update failed. Please try again.", 400)
     }
 
     if (!id || !Array.isArray(email_addresses) || !email_addresses[0]?.email_address) {
-      return sendError(res, "Malformed user.updated payload", 400)
+      return sendError(res, "Account update failed. Please try again.", 400)
     }
 
     try {
@@ -87,7 +89,8 @@ export const handleClerkWebhook = async (req, res) => {
         }
       )
     } catch (error) {
-      return sendError(res, "Failed to update user", 500)
+      console.error('Error updating user from webhook:', error);
+      return sendError(res, "Something went wrong updating your account. Please try again.", 500)
     }
   }
 
@@ -95,18 +98,15 @@ export const handleClerkWebhook = async (req, res) => {
     const { id } = evt.data
 
     if (!id) {
-      return sendError(res, "Malformed user.deleted payload", 400)
+      return sendError(res, "Account deletion failed. Please try again.", 400)
     }
 
     try {
       await User.findOneAndDelete({ clerkId: id })
     } catch (error) {
-      return sendError(res, "Failed to delete user", 500)
+      console.error('Error deleting user from webhook:', error);
+      return sendError(res, "Something went wrong deleting your account. Please try again.", 500)
     }
-  }
-
-  else {
-    console.log(`Unhandled webhook event type: ${eventType}`)
   }
 
   return sendSuccess(res, "Webhook received", undefined, 200)

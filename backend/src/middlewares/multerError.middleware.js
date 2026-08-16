@@ -7,9 +7,11 @@ import { sendError } from '../utils/response.js';
  */
 const multerErrorHandler = (err, req, res, next) => {
     if (err instanceof multer.MulterError) {
-        return sendError(res, err.message, 400);
+        console.error('Multer upload error:', err);
+        return sendError(res, "Please upload a valid PDF file under 10MB.", 400);
     }
-    return sendError(res, err.message || "Internal server error!", 500);
+    console.error('File upload error:', err);
+    return sendError(res, "Something went wrong on our end. Please try again.", 500);
 };
 
 export default multerErrorHandler;

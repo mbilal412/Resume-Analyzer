@@ -11,10 +11,10 @@ export const createInterviewReport = async (req, res) => {
     // Extract and validate job description and resume
     const { jobDescription } = req.body;
     if (!jobDescription || typeof jobDescription !== 'string' || !jobDescription.trim()) {
-        return sendError(res, "Job description is required and must be a non-empty string.", 400);
+        return sendError(res, "Please provide a job description.", 400);
     }
     if (!req.file) {
-        return sendError(res, "Resume file is required.", 400);
+        return sendError(res, "Please upload a resume file.", 400);
     }
 
 
@@ -24,7 +24,11 @@ export const createInterviewReport = async (req, res) => {
     try {
         resumeContent = await parseResumePdf(req.file.buffer);
     } catch (error) {
-        return sendError(res, error.message === 'Resume content is empty after parsing.' ? "Resume content is empty after parsing." : "Failed to parse resume PDF", 400);
+        console.error('Error parsing resume PDF:', error);
+        if (error.message === 'Resume content is empty after parsing.') {
+            return sendError(res, "Your resume appears to be empty. Please try another file.", 400);
+        }
+        return sendError(res, "We couldn't read your resume. Please make sure it's a valid PDF.", 400);
     }
 
 
@@ -42,15 +46,16 @@ export const createInterviewReport = async (req, res) => {
             try {
                 file = await uploadResumeToImageKit(req.file);
             } catch (error) {
-                return sendError(res, "Failed to upload resume to ImageKit", 500);
+                console.error('Error uploading resume to file service:', error);
+                return sendError(res, "Something went wrong uploading your file. Please try again.", 500);
             }
 
             break; // Exit the loop if successful
 
         } catch (error) {
-            // lastError = error;
+            console.error(`Interview report generation attempt ${attempt} failed:`, error);
             if (attempt === maxRetries) {
-                return sendError(res, "Error generating interview report", 500);
+                return sendError(res, "We couldn't generate your report. Please try again.", 500);
             }
         }
     }
@@ -71,7 +76,8 @@ export const createInterviewReport = async (req, res) => {
             generatedBy: interviewReport.modelUsed
         });
     } catch (error) {
-        return sendError(res, "Error saving interview report to database", 500);
+        console.error('Error saving interview report:', error);
+        return sendError(res, "We couldn't save your report. Please try again.", 500);
     }
 
     return sendSuccess(res, "Interview report created successfully", newReport, 201);
@@ -81,7 +87,7 @@ export const getInterviewReport = async (req, res) => {
 
     const reportId = req.params.id;
     if (!reportId || !mongoose.Types.ObjectId.isValid(reportId)) {
-        return sendError(res, "Invalid or missing Report ID!", 400);
+        return sendError(res, "Report not found. Please check the ID and try again.", 400);
     }
 
     // Fetch mongoUserId safely
@@ -90,11 +96,12 @@ export const getInterviewReport = async (req, res) => {
     try {
         const report = await InterviewReportModel.findOne({ _id: reportId, userId: mongoUserId });
         if (!report) {
-            return sendError(res, "Report not found!", 404);
+            return sendError(res, "This report doesn't exist or you don't have access to it.", 404);
         }
         return sendSuccess(res, "Report fetched successfully!", report, 200);
     } catch (error) {
-        return sendError(res, "Internal server error!", 500);
+        console.error('Error fetching report:', error);
+        return sendError(res, "Something went wrong. Please try again.", 500);
     }
 };
 
@@ -103,10 +110,11 @@ export const getAllInterviewReports = async (req, res) => {
     const mongoUserId = req.auth?.mongoUserId;
 
     try {
-        const reports = await InterviewReportModel.find({ userId: mongoUserId });
+        const reports = await InterviewReportModel.find({ userId: mongoUserId }).sort({ createdAt: -1 });
         return sendSuccess(res, "Reports fetched successfully!", reports, 200);
     } catch (error) {
-        return sendError(res, "Internal server error!", 500);
+        console.error('Error fetching reports for user:', error);
+        return sendError(res, "Something went wrong. Please try again.", 500);
     }
 };
 

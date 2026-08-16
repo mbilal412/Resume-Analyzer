@@ -293,6 +293,69 @@ $color-banner-text: color.change($color-bg-white, $alpha: 0.85);
     }
   }
 
+  // Inline loading spinner (only inside reports section, not full-page)
+  &__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: $spacing-xl;
+    background-color: $color-bg-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+
+    .spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 3px solid color.change($color-primary, $alpha: 0.15);
+      border-top-color: $color-primary;
+      border-radius: 50%;
+      animation: dashboard-spin 0.8s linear infinite;
+    }
+  }
+
+  // Error state inside the reports section
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-xl $spacing-lg;
+    text-align: center;
+    background-color: $color-bg-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+      color: #e11d48;
+      flex-shrink: 0;
+    }
+
+    p {
+      font-size: 0.9375rem;
+      color: #be123c;
+      font-weight: 500;
+    }
+  }
+
+  &__retry {
+    padding: $spacing-xs $spacing-md;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $color-primary;
+    background-color: transparent;
+    border: 1px solid $color-primary;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      color: $color-bg-white;
+      background-color: $color-primary;
+    }
+  }
+
   @media (max-width: 640px) {
     &__header {
       flex-direction: column;
@@ -307,6 +370,10 @@ $color-banner-text: color.change($color-bg-white, $alpha: 0.85);
       }
     }
   }
+}
+
+@keyframes dashboard-spin {
+  to { transform: rotate(360deg); }
 }
 
 // Table

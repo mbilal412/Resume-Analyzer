@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { useNavigate } from "react-router";
 import Navbar from "../../shared/components/navbar/Navbar";
 import Footer from "../../shared/components/footer/Footer";
 import { useAnalysis } from "../hooks/useAnalysis";
@@ -10,8 +11,17 @@ function NewAnalysis() {
   const [jobDescription, setJobDescription] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState(null);
+
   const { submitAnalysis } = useAnalysis();
   const { isSignedIn, isLoaded } = useAuth();
+  const navigate = useNavigate();
+
+  const clearErrors = () => {
+    setFormError(null);
+  };
 
   const handleFileSelect = (file) => {
     if (!file) return;
@@ -30,8 +40,20 @@ function NewAnalysis() {
 
   const handleBrowseClick = () => fileInputRef.current?.click();
 
-  const handleSubmit = () => {
-    submitAnalysis(jobDescription.trim(), selectedFile);
+  const handleSubmit = async () => {
+    clearErrors();
+    setIsSubmitting(true);
+
+    try {
+      const newReport = await submitAnalysis(jobDescription.trim(), selectedFile);
+      navigate(`/dashboard/report/${newReport._id}`);
+    } catch (err) {
+      const message =
+        typeof err === "string" ? err : "Something went wrong. Please try again.";
+      setFormError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isLoaded) {
@@ -58,6 +80,7 @@ function NewAnalysis() {
         </header>
 
         <div className="new-analysis__card">
+          {/* Resume upload field */}
           <div className="new-analysis__field">
             <label className="new-analysis__label" htmlFor="resume-upload">
               Upload Your Resume
@@ -164,8 +187,10 @@ function NewAnalysis() {
                 }}
               />
             </div>
+
           </div>
 
+          {/* Job description field */}
           <div className="new-analysis__field">
             <label className="new-analysis__label" htmlFor="job-description">
               Job Description
@@ -181,29 +206,59 @@ function NewAnalysis() {
             />
           </div>
 
+          {/* Submission-level error banner */}
+          {formError && (
+            <div
+              className="new-analysis__form-error"
+              role="alert"
+              aria-live="assertive"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+                <path
+                  d="M12 8v4M12 16h.01"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+              {formError}
+            </div>
+          )}
+
           <button
             type="button"
-            className="new-analysis__submit"
+            className={`new-analysis__submit${isSubmitting ? " new-analysis__submit--loading" : ""}`}
             onClick={handleSubmit}
-              disabled={!selectedFile || !jobDescription.trim()}
+            disabled={!selectedFile || !jobDescription.trim() || isSubmitting}
+            aria-busy={isSubmitting}
           >
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M3 3v18h18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M7 14l4-4 4 4 5-6"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            Generate Report
+            {isSubmitting ? (
+              <>
+                <span className="new-analysis__submit-spinner" aria-hidden="true" />
+                Generating Report…
+              </>
+            ) : (
+              <>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M3 3v18h18"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M7 14l4-4 4 4 5-6"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Generate Report
+              </>
+            )}
           </button>
         </div>
 

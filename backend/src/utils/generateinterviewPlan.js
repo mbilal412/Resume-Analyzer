@@ -1,5 +1,5 @@
 import Groq from "groq-sdk";
-import { systemPrompt, InterviewAnalysisSchema, resume } from './systemPrompt.js';
+import { systemPrompt, InterviewAnalysisSchema } from './systemPrompt.js';
 import { z } from "zod";
 
 

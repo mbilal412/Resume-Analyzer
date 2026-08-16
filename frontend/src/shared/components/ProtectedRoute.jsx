@@ -4,7 +4,6 @@ import './ProtectedRoute.scss';
 import { useNavigate } from "react-router";
 
 const ProtectedRoute = ({ children }) => {
-  console.log("rendering");
   const { isSignedIn, isLoaded } = useAuth();
   const navigate = useNavigate();
 

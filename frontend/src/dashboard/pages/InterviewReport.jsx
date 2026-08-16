@@ -112,21 +112,49 @@ function QuestionList({ items, openIndex, onToggle }) {
 
 function InterviewReport() {
   const { id } = useParams();
-  const { fetchReportById, isLoading, error } = useAnalysis();
+  const { fetchReportById } = useAnalysis();
   const { isSignedIn, isLoaded } = useAuth();
 
   const [openQuestion, setOpenQuestion] = useState(null);
   const [report, setReport] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!id) return;
 
+    let cancelled = false;
+
     const loadReport = async () => {
-      const result = await fetchReportById(id);
-      setReport(normalizeReport(result));
+      setIsLoading(true);
+      setError(null);
+      setReport(null);
+
+      try {
+        const data = await fetchReportById(id);
+        if (!cancelled) {
+          // Guard: if the service returned undefined (shouldn't happen, but be safe)
+          if (!data) throw new Error("Report data was empty.");
+          setReport(normalizeReport(data));
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(
+            typeof err === "string"
+              ? err
+              : "Something went wrong. Please try again.",
+          );
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
     };
 
     loadReport();
+
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   const groupedSkills = useMemo(() => {
@@ -139,7 +167,7 @@ function InterviewReport() {
     })).filter((group) => group.skills.length > 0);
   }, [report]);
 
-  if (!isLoaded || isLoading) {
+  if (!isLoaded) {
     return (
       <div className="spinner-container">
         <div className="spinner" />
@@ -151,34 +179,36 @@ function InterviewReport() {
     return null;
   }
 
-  if (error) {
+  // Loading and error states render inside the page layout (not full-page takeovers)
+  if (isLoading || error || !report) {
     return (
       <div className="interview-report">
         <Navbar />
         <main className="interview-report__main">
-          <div className="interview-report__status interview-report__status--error">
-            <p>{error}</p>
-            <Link to="/dashboard" className="interview-report__back-link">
-              Back to Dashboard
-            </Link>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!report) {
-    return (
-      <div className="interview-report">
-        <Navbar />
-        <main className="interview-report__main">
-          <div className="interview-report__status">
-            <p>Report not found.</p>
-            <Link to="/dashboard" className="interview-report__back-link">
-              Back to Dashboard
-            </Link>
-          </div>
+          {isLoading ? (
+            <div className="interview-report__status" aria-live="polite">
+              <div className="spinner" />
+            </div>
+          ) : error ? (
+            <div
+              className="interview-report__status interview-report__status--error"
+              role="alert"
+              aria-live="assertive"
+            >
+              <p>{error}</p>
+              <Link to="/dashboard" className="interview-report__back-link">
+                Back to Dashboard
+              </Link>
+            </div>
+          ) : (
+            // Fallback: loaded successfully but report was null (shouldn't happen)
+            <div className="interview-report__status">
+              <p>Report not found.</p>
+              <Link to="/dashboard" className="interview-report__back-link">
+                Back to Dashboard
+              </Link>
+            </div>
+          )}
         </main>
         <Footer />
       </div>

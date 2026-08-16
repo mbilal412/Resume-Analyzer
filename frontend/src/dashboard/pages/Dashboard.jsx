@@ -73,7 +73,7 @@ function ReportsTable({ reports }) {
           <span>Action</span>
         </div>
         {visibleReports.map((report) => (
-          <div key={report.id} className="dashboard-table__row">
+          <div key={report._id} className="dashboard-table__row">
             <div className="dashboard-table__role">
               <span className="dashboard-table__role-name">
                 {report.jobTitle}
@@ -123,23 +123,42 @@ function ReportsTable({ reports }) {
     </>
   );
 }
+
 function Dashboard() {
   const { isSignedIn, isLoaded } = useAuth();
   const { user } = useUser();
-  const { fetchAllReports, allReports, isLoading } = useAnalysis();
-  let reports = allReports;
+  const { fetchAllReports, allReports } = useAnalysis();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    const fetchReports = async () => {
+    let cancelled = false;
+
+    const loadReports = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
         await fetchAllReports();
-        reports = allReports;
-      } catch (error) {
-        console.error("Error fetching reports:", error);
+      } catch (err) {
+        if (!cancelled) {
+          setError(
+            typeof err === "string"
+              ? err
+              : "Something went wrong. Please try again.",
+          );
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    fetchReports();
+    loadReports();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (!isLoaded) {
@@ -153,16 +172,6 @@ function Dashboard() {
   if (!isSignedIn) {
     return null;
   }
-
-  if (isLoading) {
-    return (
-      <div className="spinner-container">
-        <div className="spinner" />
-      </div>
-    );
-  }
-
-  console.log(reports);
 
   const firstName =
     user?.firstName ||
@@ -227,14 +236,63 @@ function Dashboard() {
                   strokeLinecap="round"
                 />
               </svg>
-              <input type="text" placeholder="Search reports..." readOnly />
+              <input
+                type="text"
+                placeholder="Search reports..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
 
-          {reports.length === 0 ? (
+          {isLoading ? (
+            <div className="dashboard-reports__loading" aria-live="polite">
+              <div className="spinner" />
+            </div>
+          ) : error ? (
+            <div
+              className="dashboard-reports__error"
+              role="alert"
+              aria-live="assertive"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+                <path
+                  d="M12 8v4M12 16h.01"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <p>{error}</p>
+              <button
+                type="button"
+                className="dashboard-reports__retry"
+                onClick={() => {
+                  setError(null);
+                  setIsLoading(true);
+                  fetchAllReports()
+                    .catch((err) =>
+                      setError(
+                        typeof err === "string"
+                          ? err
+                          : "Something went wrong. Please try again.",
+                      ),
+                    )
+                    .finally(() => setIsLoading(false));
+                }}
+              >
+                Try again
+              </button>
+            </div>
+          ) : allReports.length === 0 ? (
             <EmptyReports />
           ) : (
-            <ReportsTable reports={reports} />
+            <ReportsTable
+              reports={allReports.filter((report) =>
+                report.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase())
+              )}
+            />
           )}
         </section>
       </main>
