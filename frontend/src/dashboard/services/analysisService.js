@@ -25,7 +25,6 @@ export const generateAnalysis = async (jobDescription, file, token) => {
 };
 
 export const getAllInterviewReports = async (token) => {
-  console.log("token", token)
   try {
     
     const response = await api.get("/reports", {
