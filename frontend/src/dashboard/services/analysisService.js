@@ -1,4 +1,9 @@
 import axios from "axios";
+import { useAuth } from "@clerk/clerk-react";
+
+const {getToken} = useAuth()
+
+
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -11,9 +16,11 @@ export const generateAnalysis = async (jobDescription, file) => {
   formData.append("resume", file);
 
   try {
+    const token = await getToken()
     const response = await api.post("/reports", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -24,7 +31,12 @@ export const generateAnalysis = async (jobDescription, file) => {
 
 export const getAllInterviewReports = async () => {
   try {
-    const response = await api.get("/reports");
+    const token = await getToken()
+    const response = await api.get("/reports", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || "Something went wrong. Please try again.";
@@ -33,7 +45,12 @@ export const getAllInterviewReports = async () => {
 
 export const getInterviewReport = async (id) => {
   try {
-    const response = await api.get(`/reports/${id}`);
+    const token = await getToken()
+    const response = await api.get(`/reports/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || "Something went wrong. Please try again.";
