@@ -21,6 +21,10 @@ app.use('/api/auth', authRouter);
 app.use('/api/webhooks', webhookRoutes)
 app.use('/api/reports', interviewReportRoutes);
 
+app.use('/api/health', (req, res) => {
+    res.status(200).json({ message: 'Server is healthy' });
+});
+
 
 
 export default app;

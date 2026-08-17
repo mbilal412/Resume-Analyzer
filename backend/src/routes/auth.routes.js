@@ -7,4 +7,5 @@ const router = express.Router();
 
 router.get('/me', requireAuth, getMeController);
 
+
 export default router;
